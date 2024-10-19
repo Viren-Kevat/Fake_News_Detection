@@ -1,9 +1,4 @@
-# Required packages
-scikit-learn
-numpy
-pandas
 streamlit
-
-# Build dependencies
-setuptools
-wheel
+pandas
+scikit-learn
+joblib

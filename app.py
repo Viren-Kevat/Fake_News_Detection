@@ -7,10 +7,10 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 import joblib
 
-# Load datasets directly from CSV file paths
+# Load datasets directly from the local files
 def load_data():
-    true_news_file = 'E:\Fake_News_Detection\True.csv'  # Update this path
-    fake_news_file = 'E:\Fake_News_Detection\Fake.csv'  # Update this path
+    true_news_file = 'E:\Fake_News_Detection\True.csv'  # Make sure this file is in the project directory
+    fake_news_file = 'E:\Fake_News_Detection\Fake.csv'  # Make sure this file is in the project directory
     
     true_news = pd.read_csv(true_news_file)
     false_news = pd.read_csv(fake_news_file)
@@ -65,7 +65,7 @@ def predict_fake_news(input_text):
 def main():
     st.title("Fake News Detection")
 
-    # Load data directly
+    # Load data directly from the local files
     df = load_data()
     st.write("Data Loaded Successfully. Total articles: ", df.shape[0])
 
