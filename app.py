@@ -9,8 +9,8 @@ import joblib
 
 # Load datasets directly from the local files
 def load_data():
-    true_news_file = 'E:\Fake_News_Detection\True.csv'  # Make sure this file is in the project directory
-    fake_news_file = 'E:\Fake_News_Detection\Fake.csv'  # Make sure this file is in the project directory
+    true_news_file = 'E:/Fake_News_Detection/True.csv'  # Make sure this file is in the project directory
+    fake_news_file = 'E:/Fake_News_Detection/Fake.csv'  # Make sure this file is in the project directory
     
     true_news = pd.read_csv(true_news_file)
     false_news = pd.read_csv(fake_news_file)
