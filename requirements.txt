@@ -1,8 +1,8 @@
 # Required packages
-scikit-learn==1.5.2
-numpy==1.23.5  # Downgraded for compatibility
-pandas  # Include if you're using pandas
-streamlit  # Ensure streamlit is included
+scikit-learn
+numpy
+pandas
+streamlit
 
 # Build dependencies
 setuptools
