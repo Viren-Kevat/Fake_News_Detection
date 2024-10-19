@@ -52,4 +52,3 @@ This project is a web application built using Streamlit to detect fake news arti
 git clone https://github.com/your-username/fake-news-detection.git
 cd fake-news-detection
 ```
-# Fake_News_Detection
