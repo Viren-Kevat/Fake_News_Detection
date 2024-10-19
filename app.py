@@ -1,15 +1,17 @@
 import streamlit as st
 import pandas as pd
 import re
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 import joblib
 
-# Load datasets from uploaded CSV files
-@st.cache_data
-def load_data(true_news_file, fake_news_file):
+# Load datasets directly from CSV file paths
+def load_data():
+    true_news_file = 'E:\Fake_News_Detection\True.csv'  # Update this path
+    fake_news_file = 'E:\Fake_News_Detection\Fake.csv'  # Update this path
+    
     true_news = pd.read_csv(true_news_file)
     false_news = pd.read_csv(fake_news_file)
 
@@ -63,26 +65,23 @@ def predict_fake_news(input_text):
 def main():
     st.title("Fake News Detection")
 
-    true_news_file = st.file_uploader("Upload True News CSV", type=["csv"])
-    fake_news_file = st.file_uploader("Upload Fake News CSV", type=["csv"])
+    # Load data directly
+    df = load_data()
+    st.write("Data Loaded Successfully. Total articles: ", df.shape[0])
 
-    if true_news_file and fake_news_file:
-        df = load_data(true_news_file, fake_news_file)
-        st.write("Data Loaded Successfully. Total articles: ", df.shape[0])
+    if st.button("Train Model"):
+        accuracy = train_model(df)
+        st.write(f"Model trained with an accuracy of: {accuracy * 100:.2f}%")
 
-        if st.button("Train Model"):
-            accuracy = train_model(df)
-            st.write(f"Model trained with an accuracy of: {accuracy * 100:.2f}%")
+    input_text = st.text_area("Enter news article or headline to check if it's Fake or Real:")
 
-        input_text = st.text_area("Enter news article or headline to check if it's Fake or Real:")
-
-        if st.button("Predict"):
-            if input_text:
-                prediction = predict_fake_news(input_text)
-                if prediction == 1:
-                    st.write("The news is Real.")
-                else:
-                    st.write("The news is Fake.")
+    if st.button("Predict"):
+        if input_text:
+            prediction = predict_fake_news(input_text)
+            if prediction == 1:
+                st.write("The news is Real.")
+            else:
+                st.write("The news is Fake.")
 
 if __name__ == '__main__':
     main()
