@@ -1,4 +1,3 @@
-# Import libraries
 import streamlit as st
 import pandas as pd
 import re
@@ -8,49 +7,38 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 import joblib
 
-# Set paths for true and fake news CSV files
-TRUE_NEWS_FILE = "E:/Fake_News_Detection/True.csv"  # Replace with your actual path
-FAKE_NEWS_FILE = "E:/Fake_News_Detection/Fake.csv"  # Replace with your actual path
-
-# Load datasets (True news and Fake news)
+# Load datasets from uploaded CSV files
 @st.cache_data
-def load_data():
-    true_news = pd.read_csv(TRUE_NEWS_FILE)
-    false_news = pd.read_csv(FAKE_NEWS_FILE)
+def load_data(true_news_file, fake_news_file):
+    true_news = pd.read_csv(true_news_file)
+    false_news = pd.read_csv(fake_news_file)
 
-    # Assign labels: 1 for real news, 0 for fake news
-    true_news['label'] = 1
-    false_news['label'] = 0
+    true_news['label'] = 1  # 1 for real news
+    false_news['label'] = 0  # 0 for fake news
 
-    # Concatenate the datasets
     df = pd.concat([true_news, false_news], ignore_index=True)
-    return df[['text', 'label']]  # Ensure columns 'text' and 'label' are present
+    return df[['text', 'label']]
 
 # Preprocess Text Data
 def preprocess_text(text):
     text = text.lower()  # Convert to lowercase
-    text = re.sub(r'\W', ' ', text)  # Remove special characters and numbers
+    text = re.sub(r'\W', ' ', text)  # Remove special characters
     return text
 
-# Prepare the model
+# Train the model
 def train_model(df):
     df['text'] = df['text'].apply(preprocess_text)
-
-    # Split data into training and testing
     X = df['text']
     y = df['label']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Use CountVectorizer instead of TfidfVectorizer
     vectorizer = CountVectorizer(max_features=5000)
     X_train_vec = vectorizer.fit_transform(X_train)
     X_test_vec = vectorizer.transform(X_test)
 
-    # Train the Naive Bayes model
     model = MultinomialNB()
     model.fit(X_train_vec, y_train)
 
-    # Test model accuracy
     y_pred = model.predict(X_test_vec)
     accuracy = accuracy_score(y_test, y_pred)
 
@@ -62,15 +50,12 @@ def train_model(df):
 
 # Predict using the trained model
 def predict_fake_news(input_text):
-    # Load the saved model and vectorizer
     model = joblib.load('fake_news_model.pkl')
     vectorizer = joblib.load('vectorizer.pkl')
 
-    # Preprocess and vectorize input
     input_text = preprocess_text(input_text)
     input_vector = vectorizer.transform([input_text])
 
-    # Predict and return result
     prediction = model.predict(input_vector)
     return prediction[0]
 
@@ -78,27 +63,26 @@ def predict_fake_news(input_text):
 def main():
     st.title("Fake News Detection")
 
-    # Load data from CSV files
-    df = load_data()
-    st.write("Data Loaded Successfully. Total articles: ", df.shape[0])
+    true_news_file = st.file_uploader("Upload True News CSV", type=["csv"])
+    fake_news_file = st.file_uploader("Upload Fake News CSV", type=["csv"])
 
-    # Option to train the model
-    if st.button("Train Model"):
-        accuracy = train_model(df)
-        st.write(f"Model trained with an accuracy of: {accuracy * 100:.2f}%")
+    if true_news_file and fake_news_file:
+        df = load_data(true_news_file, fake_news_file)
+        st.write("Data Loaded Successfully. Total articles: ", df.shape[0])
 
-    # Input for user to enter news article or headline
-    input_text = st.text_area("Enter news article or headline to check if it's Fake or Real:")
+        if st.button("Train Model"):
+            accuracy = train_model(df)
+            st.write(f"Model trained with an accuracy of: {accuracy * 100:.2f}%")
 
-    # Prediction button
-    if st.button("Predict"):
-        if input_text:
-            prediction = predict_fake_news(input_text)
-            if prediction == 1:
-                st.write("The news is Real.")
-            else:
-                st.write("The news is Fake.")
+        input_text = st.text_area("Enter news article or headline to check if it's Fake or Real:")
 
-# Correct use of name
+        if st.button("Predict"):
+            if input_text:
+                prediction = predict_fake_news(input_text)
+                if prediction == 1:
+                    st.write("The news is Real.")
+                else:
+                    st.write("The news is Fake.")
+
 if __name__ == '__main__':
     main()
