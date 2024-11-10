@@ -42,7 +42,7 @@ Welcome to the **Fake News Detection Web App**, a dynamic platform built using *
 ### 1. Clone the Repository
 To get started, clone the repository to your local machine:
 ```bash
-git clone https://github.com/your-username/fake-news-detection.git
+git clone https://github.com/viren-kevat/fake-news-detection.git
 cd fake-news-detection
 ```
 ### 2. Prepare Your CSV Files
